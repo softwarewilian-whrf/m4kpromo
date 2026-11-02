@@ -171,10 +171,10 @@
                                     readonly 
                                     class="flex-1 bg-slate-900 px-4 py-3 rounded-xl border border-slate-700 font-mono text-sm text-shopee-400 focus:outline-none font-medium"
                                 >
-                                <div class="flex gap-2">
+                                <div class="flex flex-wrap gap-2">
                                     <button 
                                         onclick="copyConvertedUrl()" 
-                                        class="flex-1 sm:flex-none px-4 py-3 bg-shopee-500 hover:bg-shopee-600 text-white font-bold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 text-sm">
+                                        class="px-4 py-3 bg-shopee-500 hover:bg-shopee-600 text-white font-bold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 text-sm">
                                         <i data-lucide="copy" class="w-4 h-4"></i> Copiar Link
                                     </button>
                                     <a 
@@ -182,9 +182,8 @@
                                         href="#" 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        class="p-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl transition-colors flex items-center justify-center" 
-                                        title="Testar Link">
-                                        <i data-lucide="external-link" class="w-5 h-5"></i>
+                                        class="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 text-sm">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i> Abrir Produto
                                     </a>
                                 </div>
                             </div>
@@ -402,9 +401,14 @@
                         <p class="font-mono text-shopee-400 truncate text-[11px]">${item.converted}</p>
                         <p class="text-[10px] text-slate-400 truncate">Original: ${item.original} • ${item.date}</p>
                     </div>
-                    <button onclick="copyToClipboard('${item.converted}')" class="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 transition-colors shrink-0" title="Copiar Link">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
-                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <a href="${item.converted}" target="_blank" rel="noopener noreferrer" class="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-colors" title="Abrir Produto">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                        <button onclick="copyToClipboard('${item.converted}')" class="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 transition-colors" title="Copiar Link">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 `;
                 list.appendChild(div);
             });
