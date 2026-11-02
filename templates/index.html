@@ -16,9 +16,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Lucide Icons & QRCode JS -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -56,6 +55,32 @@
 <body class="bg-slate-950 text-slate-100 min-h-full flex flex-col transition-colors duration-200">
 
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MODAL DE OPÇÕES APÓS GERAR O LINK -->
+    <div id="actionModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center">
+            <div class="w-14 h-14 bg-emerald-500/10 text-emerald-400 rounded-2xl mx-auto flex items-center justify-center border border-emerald-500/20 shadow-lg">
+                <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-extrabold text-white">Link Pronto com Sucesso!</h3>
+                <p class="text-xs text-slate-400">Escolha uma das opções abaixo para prosseguir com o seu link de afiliado:</p>
+            </div>
+            
+            <div class="space-y-3">
+                <a id="modalOpenBtn" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="external-link" class="w-5 h-5"></i> Abrir Produto
+                </a>
+                <button onclick="copyModalUrl()" class="w-full py-4 px-6 bg-shopee-500 hover:bg-shopee-600 text-white font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="copy" class="w-5 h-5"></i> Copiar Link
+                </button>
+            </div>
+
+            <button onclick="closeModal()" class="text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+                Fechar janela
+            </button>
+        </div>
+    </div>
 
     <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -106,7 +131,6 @@
             <!-- Main Conversion Card -->
             <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-6">
                 
-                <!-- SINGLE LINK CONVERSION FORM -->
                 <div id="singleConversionSection" class="space-y-6">
                     <form id="convertForm" onsubmit="handleConvert(event)" class="space-y-4">
                         <div class="space-y-2">
@@ -142,67 +166,6 @@
                             <span>Ir para o Produto</span>
                         </button>
                     </form>
-
-                    <!-- RESULT DISPLAY AREA -->
-                    <div id="resultCard" class="hidden space-y-6 pt-6 border-t border-slate-800 animate-fadeIn">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                                <i data-lucide="check-circle-2" class="w-4 h-4"></i> Link Convertido com Sucesso!
-                            </span>
-                            <span id="conversionMethodBadge" class="text-[11px] font-semibold text-slate-400">API GraphQL</span>
-                        </div>
-
-                        <!-- NOME DO PRODUTO EM LETRAS MAIÚSCULAS ACIMA DO LINK -->
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-shopee-500 uppercase tracking-wide flex items-center gap-1.5">
-                                <i data-lucide="tag" class="w-4 h-4"></i> Produto:
-                            </label>
-                            <div id="productNameOutput" class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-sm font-extrabold text-white uppercase tracking-wider">
-                                NOME DO PRODUTO
-                            </div>
-                        </div>
-
-                        <div class="p-4 bg-slate-800/60 rounded-2xl border border-slate-700 space-y-3">
-                            <label class="text-xs font-semibold text-slate-400">Seu Link de Afiliado Pronto:</label>
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                                <input 
-                                    type="text" 
-                                    id="convertedUrlOutput" 
-                                    readonly 
-                                    class="flex-1 bg-slate-900 px-4 py-3 rounded-xl border border-slate-700 font-mono text-sm text-shopee-400 focus:outline-none font-medium"
-                                >
-                                <div class="flex flex-wrap gap-2">
-                                    <button 
-                                        onclick="copyConvertedUrl()" 
-                                        class="px-4 py-3 bg-shopee-500 hover:bg-shopee-600 text-white font-bold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 text-sm">
-                                        <i data-lucide="copy" class="w-4 h-4"></i> Copiar Link
-                                    </button>
-                                    <a 
-                                        id="openLinkBtn" 
-                                        href="#" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        class="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 text-sm">
-                                        <i data-lucide="external-link" class="w-4 h-4"></i> Abrir Produto
-                                    </a>
-                                </div>
-                            </div>
-                        </div>                     
-
-                        <!-- QR Code Section -->
-                        <div class="p-4 bg-slate-800/40 rounded-2xl border border-slate-800 flex items-center gap-4">
-                            <div id="qrcode" class="p-2 bg-white rounded-xl shadow-sm border border-slate-200 shrink-0"></div>
-                            <div class="space-y-1">
-                                <h4 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-                                    <i data-lucide="qr-code" class="w-4 h-4 text-shopee-500"></i> QR Code do Link
-                                </h4>
-                                <p class="text-xs text-slate-400">Escaneie com a câmera do celular.</p>
-                                <button onclick="downloadQRCode()" class="text-xs text-shopee-500 font-semibold hover:underline inline-block pt-1">
-                                    Baixar QR Code PNG
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
             </div>
@@ -260,7 +223,7 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        let qrCodeInstance = null;
+        let currentConvertedUrl = "";
 
         document.addEventListener('DOMContentLoaded', () => { 
             lucide.createIcons(); 
@@ -303,9 +266,11 @@
                 const data = await res.json();
                 
                 if(data.success) {
-                    displayResult(data.convertedUrl, data.productName, data.method);
+                    currentConvertedUrl = data.convertedUrl;
                     saveToHistory(data.productName, data.convertedUrl, url);
                     showToast('Link gerado com sucesso!', 'success');
+                    openModal(data.convertedUrl);
+                    document.getElementById('shopeeUrl').value = '';
                 } else {
                     showToast('Erro: ' + data.error, 'error');
                 }
@@ -318,50 +283,22 @@
             }
         }
 
-        function displayResult(convertedUrl, productName, methodText) {
-            const resultCard = document.getElementById('resultCard');
-            const output = document.getElementById('convertedUrlOutput');
-            const productOutput = document.getElementById('productNameOutput');
-            const openBtn = document.getElementById('openLinkBtn');
-            const badge = document.getElementById('conversionMethodBadge');
-
-            resultCard.classList.remove('hidden');
-            output.value = convertedUrl;
-            productOutput.innerText = productName.toUpperCase();
-            openBtn.href = convertedUrl;
-            badge.innerText = methodText;
-
-            generateQRCode(convertedUrl);
-            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        function openModal(url) {
+            const modal = document.getElementById('actionModal');
+            const openBtn = document.getElementById('modalOpenBtn');
+            openBtn.href = url;
+            modal.classList.remove('hidden');
         }
 
-        function generateQRCode(text) {
-            const container = document.getElementById('qrcode');
-            container.innerHTML = "";
-            qrCodeInstance = new QRCode(container, {
-                text: text,
-                width: 88,
-                height: 88,
-                colorDark: "#1e293b",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.M
-            });
+        function closeModal() {
+            document.getElementById('actionModal').classList.add('hidden');
         }
 
-        function downloadQRCode() {
-            const img = document.querySelector('#qrcode img');
-            if (img && img.src) {
-                const a = document.createElement('a');
-                a.href = img.src;
-                a.download = 'shopee-qrcode.png';
-                a.click();
-            } else {
-                showToast('Aguarde o QR Code carregar.', 'warning');
-            }
-        }
-
-        function copyConvertedUrl() {
-            copyToClipboard(document.getElementById('convertedUrlOutput').value);
+        function copyModalUrl() {
+            if (!currentConvertedUrl) return;
+            navigator.clipboard.writeText(currentConvertedUrl);
+            showToast('Link copiado para a área de transferência!', 'success');
+            closeModal();
         }
 
         function copyToClipboard(text) {
