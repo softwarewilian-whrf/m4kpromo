@@ -60,14 +60,8 @@
     <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="relative group cursor-pointer">
-                    <label for="logoUpload" class="cursor-pointer block">
-                        <div id="logoPreview" class="w-11 h-11 rounded-2xl bg-slate-800 flex items-center justify-center shadow-lg shadow-shopee-500/10 transition-transform group-hover:scale-105 overflow-hidden border border-slate-700">
-                            <!-- Imagem servida corretamente pelo Flask a partir da pasta static -->
-                            <img src="{{ url_for('static', filename='logo.png') }}" alt="M4K PROMO Logo" class="w-full h-full object-cover">
-                        </div>
-                    </label>
-                    <input type="file" id="logoUpload" accept="image/*" class="hidden">
+                <div class="w-11 h-11 rounded-2xl bg-slate-800 flex items-center justify-center shadow-lg shadow-shopee-500/10 overflow-hidden border border-slate-700">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="M4K PROMO Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
@@ -90,9 +84,6 @@
                     </span>
                     API Status: Online
                 </div>
-                <button onclick="openSettingsModal()" class="p-2.5 rounded-xl border border-slate-800 hover:bg-slate-800 transition-colors text-slate-300" title="Configurações da API">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                </button>
             </div>
         </div>
     </header>
@@ -329,10 +320,10 @@
 
                 <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-4">
                     <h3 class="font-bold text-base text-white flex items-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Suas Chaves Estão Seguras
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Sistema Protegido
                     </h3>
                     <p class="text-xs text-slate-400 leading-relaxed">
-                        As credenciais ficam guardadas apenas no LocalStorage do seu navegador ou validadas de forma privada no servidor Flask local.
+                        Suas credenciais de afiliado estão configuradas exclusivamente no servidor privado.
                     </p>
                 </div>
             </div>
@@ -346,53 +337,14 @@
         <p>Desenvolvido para máxima performance WF SOLUÇÕES INTELIGENTES.</p>
     </footer>
 
-    <!-- SETTINGS MODAL -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-slate-800 shadow-2xl relative">
-            <button onclick="closeSettingsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <div class="space-y-1">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="key" class="w-5 h-5 text-shopee-500"></i> Credenciais da API Shopee
-                </h3>
-                <p class="text-xs text-slate-400">Insira seu AppID e Secret fornecidos no painel de Afiliados.</p>
-            </div>
-
-            <div class="space-y-4">
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-300">AppID</label>
-                    <input type="text" id="settingAppId" placeholder="Ex: 1835..." class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:ring-2 focus:ring-shopee-500 outline-none">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-300">Secret / Senha</label>
-                    <input type="password" id="settingSecret" placeholder="Sua chave secreta" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:ring-2 focus:ring-shopee-500 outline-none">
-                </div>
-            </div>
-
-            <div class="pt-2 flex justify-end gap-2">
-                <button onclick="closeSettingsModal()" class="px-4 py-2.5 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs">Cancelar</button>
-                <button onclick="saveSettings()" class="px-5 py-2.5 bg-shopee-500 hover:bg-shopee-600 text-white font-bold rounded-xl text-xs shadow-md">Salvar</button>
-            </div>
-        </div>
-    </div>
-
     <!-- JAVASCRIPT LOGIC -->
     <script>
         let qrCodeInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => { 
             lucide.createIcons(); 
-            loadSettingsToUI();
             loadHistory();
-            setupLogoUpload();
         });
-
-        function loadSettingsToUI() {
-            document.getElementById('settingAppId').value = localStorage.getItem('py_app_id') || '';
-            document.getElementById('settingSecret').value = localStorage.getItem('py_secret') || '';
-        }
 
         function switchTab(tab) {
             const singleSection = document.getElementById('singleConversionSection');
@@ -430,8 +382,6 @@
             const url = document.getElementById('shopeeUrl').value.trim();
             const subId = document.getElementById('subIdInput').value.trim();
             const price = parseFloat(document.getElementById('priceInput').value) || 0;
-            const appId = localStorage.getItem('py_app_id') || '';
-            const secret = localStorage.getItem('py_secret') || '';
 
             if(!url) {
                 showToast('Informe um link válido.', 'error');
@@ -445,10 +395,11 @@
             lucide.createIcons();
 
             try {
+                // Envia apenas a URL e o SubId. As chaves ficam estritamente seguras no Python do servidor.
                 const res = await fetch('/api/convert', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url, subId, appId, secret })
+                    body: JSON.stringify({ url, subId })
                 });
                 const data = await res.json();
                 
@@ -536,12 +487,11 @@
 
             const urls = batchInput.split('\n').filter(u => u.trim().length > 0);
             const results = [];
-            const appId = localStorage.getItem('py_app_id') || '18358780307';
-
+            
             for (let u of urls) {
                 const clean = u.trim();
                 const sep = clean.includes('?') ? '&' : '?';
-                results.push(`${clean}${sep}utm_source=an_${appId}&af_siteid=${appId}`);
+                results.push(`${clean}${sep}utm_source=an_server&af_siteid=server`);
             }
 
             document.getElementById('batchOutputTextarea').value = results.join('\n');
@@ -595,49 +545,6 @@
             localStorage.removeItem('shopee_history');
             loadHistory();
             showToast('Histórico limpo.', 'info');
-        }
-
-        function setupLogoUpload() {
-            const input = document.getElementById('logoUpload');
-            const preview = document.getElementById('logoPreview');
-            const saved = localStorage.getItem('shopee_custom_logo');
-
-            if (saved) {
-                preview.innerHTML = `<img src="${saved}" class="w-full h-full object-cover rounded-2xl" alt="Logo">`;
-            }
-
-            input.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const base64 = event.target.result;
-                        preview.innerHTML = `<img src="${base64}" class="w-full h-full object-cover rounded-2xl" alt="Logo">`;
-                        localStorage.setItem('shopee_custom_logo', base64);
-                        showToast('Logotipo atualizado!', 'success');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        function openSettingsModal() {
-            loadSettingsToUI();
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
-        function saveSettings() {
-            const appId = document.getElementById('settingAppId').value.trim();
-            const secret = document.getElementById('settingSecret').value.trim();
-            
-            localStorage.setItem('py_app_id', appId);
-            localStorage.setItem('py_secret', secret);
-            closeSettingsModal();
-            showToast('Credenciais salvas com sucesso!', 'success');
         }
 
         function showToast(message, type = 'info') {
