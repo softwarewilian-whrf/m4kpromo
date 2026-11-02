@@ -301,7 +301,6 @@
             lucide.createIcons();
 
             try {
-                // Envia apenas a URL. As chaves ficam estritamente seguras no Python do servidor.
                 const res = await fetch('/api/convert', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
