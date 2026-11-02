@@ -6,7 +6,7 @@
     <title>M4K PROMO - Conversor Oficial de Links de Afiliado Shopee</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='fivecon.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='fivecon.png') }}">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -72,7 +72,6 @@
                            TM 
                         </span>
                     </div>
-                    <p class="text-xs text-slate-400 font-medium"></p>
                 </div>
             </div>
 
@@ -140,7 +139,7 @@
                             id="btnConvert" 
                             class="w-full py-4 px-6 bg-gradient-to-r from-shopee-500 to-orange-500 hover:from-shopee-600 hover:to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-shopee-500/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 text-base">
                             <i data-lucide="wand-2" class="w-5 h-5"></i> 
-                            <span>Ir para o produto</span>
+                            <span>Gerar Link de Afiliado</span>
                         </button>
                     </form>
 
@@ -151,6 +150,16 @@
                                 <i data-lucide="check-circle-2" class="w-4 h-4"></i> Link Convertido com Sucesso!
                             </span>
                             <span id="conversionMethodBadge" class="text-[11px] font-semibold text-slate-400">API GraphQL</span>
+                        </div>
+
+                        <!-- NOME DO PRODUTO EM LETRAS MAIÚSCULAS ACIMA DO LINK -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-shopee-500 uppercase tracking-wide flex items-center gap-1.5">
+                                <i data-lucide="tag" class="w-4 h-4"></i> Produto:
+                            </label>
+                            <div id="productNameOutput" class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-sm font-extrabold text-white uppercase tracking-wider">
+                                NOME DO PRODUTO
+                            </div>
                         </div>
 
                         <div class="p-4 bg-slate-800/60 rounded-2xl border border-slate-700 space-y-3">
@@ -181,31 +190,17 @@
                             </div>
                         </div>                     
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-800/40 rounded-2xl border border-slate-800 flex items-center gap-4">
-                                <div id="qrcode" class="p-2 bg-white rounded-xl shadow-sm border border-slate-200 shrink-0"></div>
-                                <div class="space-y-1">
-                                    <h4 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-                                        <i data-lucide="qr-code" class="w-4 h-4 text-shopee-500"></i> QR Code do Link
-                                    </h4>
-                                    <p class="text-xs text-slate-400">Escaneie com a câmera do celular.</p>
-                                    <button onclick="downloadQRCode()" class="text-xs text-shopee-500 font-semibold hover:underline inline-block pt-1">
-                                        Baixar QR Code PNG
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="p-4 bg-gradient-to-br from-orange-500/5 to-shopee-500/10 rounded-2xl border border-shopee-500/20 space-y-2 flex flex-col justify-center">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                                        <i data-lucide="calculator" class="w-4 h-4 text-shopee-500"></i> Comissão Estimada
-                                    </span>
-                                    <span class="text-xs font-bold text-shopee-500 bg-slate-900 px-2 py-0.5 rounded-md border border-shopee-500/20">~8% a 14%</span>
-                                </div>
-                                <div class="flex items-baseline justify-between pt-1">
-                                    <span class="text-xs text-slate-400">Previsão:</span>
-                                    <span id="estimatedCommissionText" class="text-xl font-extrabold text-emerald-400">Até 14% do valor</span>
-                                </div>
+                        <!-- QR Code Section -->
+                        <div class="p-4 bg-slate-800/40 rounded-2xl border border-slate-800 flex items-center gap-4">
+                            <div id="qrcode" class="p-2 bg-white rounded-xl shadow-sm border border-slate-200 shrink-0"></div>
+                            <div class="space-y-1">
+                                <h4 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+                                    <i data-lucide="qr-code" class="w-4 h-4 text-shopee-500"></i> QR Code do Link
+                                </h4>
+                                <p class="text-xs text-slate-400">Escaneie com a câmera do celular.</p>
+                                <button onclick="downloadQRCode()" class="text-xs text-shopee-500 font-semibold hover:underline inline-block pt-1">
+                                    Baixar QR Code PNG
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -309,8 +304,8 @@
                 const data = await res.json();
                 
                 if(data.success) {
-                    displayResult(data.convertedUrl, data.method);
-                    saveToHistory(url, data.convertedUrl);
+                    displayResult(data.convertedUrl, data.productName, data.method);
+                    saveToHistory(data.productName, data.convertedUrl, url);
                     showToast('Link gerado com sucesso!', 'success');
                 } else {
                     showToast('Erro: ' + data.error, 'error');
@@ -324,14 +319,16 @@
             }
         }
 
-        function displayResult(convertedUrl, methodText) {
+        function displayResult(convertedUrl, productName, methodText) {
             const resultCard = document.getElementById('resultCard');
             const output = document.getElementById('convertedUrlOutput');
+            const productOutput = document.getElementById('productNameOutput');
             const openBtn = document.getElementById('openLinkBtn');
             const badge = document.getElementById('conversionMethodBadge');
 
             resultCard.classList.remove('hidden');
             output.value = convertedUrl;
+            productOutput.innerText = productName.toUpperCase();
             openBtn.href = convertedUrl;
             badge.innerText = methodText;
 
@@ -374,12 +371,13 @@
             showToast('Link copiado para a área de transferência!', 'success');
         }
 
-        function saveToHistory(orig, conv) {
+        function saveToHistory(productName, convUrl, origUrl) {
             let history = JSON.parse(localStorage.getItem('shopee_history') || '[]');
             history.unshift({
                 id: Date.now(),
-                original: orig,
-                converted: conv,
+                productName: productName.toUpperCase(),
+                original: origUrl,
+                converted: convUrl,
                 date: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
             });
             history = history.slice(0, 10);
@@ -400,10 +398,11 @@
                 div.className = "p-3 bg-slate-800/40 border border-slate-800 rounded-2xl flex items-center justify-between gap-3 text-xs";
                 div.innerHTML = `
                     <div class="truncate flex-1">
-                        <p class="font-bold text-slate-200 truncate">${item.converted}</p>
-                        <p class="text-[11px] text-slate-400 truncate">Original: ${item.original} • ${item.date}</p>
+                        <p class="font-bold text-white uppercase truncate">${item.productName}</p>
+                        <p class="font-mono text-shopee-400 truncate text-[11px]">${item.converted}</p>
+                        <p class="text-[10px] text-slate-400 truncate">Original: ${item.original} • ${item.date}</p>
                     </div>
-                    <button onclick="copyToClipboard('${item.converted}')" class="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 transition-colors shrink-0" title="Copiar">
+                    <button onclick="copyToClipboard('${item.converted}')" class="p-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 transition-colors shrink-0" title="Copiar Link">
                         <i data-lucide="copy" class="w-4 h-4"></i>
                     </button>
                 `;
