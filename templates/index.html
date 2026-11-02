@@ -107,17 +107,6 @@
             <!-- Main Conversion Card -->
             <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-6">
                 
-                <div class="flex items-center justify-center">
-                    <div class="bg-slate-800 p-1 rounded-2xl flex gap-1 border border-slate-700">
-                        <button id="tabSingleBtn" onclick="switchTab('single')" class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-slate-900 text-shopee-500 shadow-sm">
-                            <i data-lucide="link" class="w-4 h-4"></i> Link Único
-                        </button>
-                        <button id="tabBatchBtn" onclick="switchTab('batch')" class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white">
-                            <i data-lucide="layers" class="w-4 h-4"></i> Conversão em Lote
-                        </button>
-                    </div>
-                </div>
-
                 <!-- SINGLE LINK CONVERSION FORM -->
                 <div id="singleConversionSection" class="space-y-6">
                     <form id="convertForm" onsubmit="handleConvert(event)" class="space-y-4">
@@ -146,37 +135,12 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs font-semibold text-slate-400 mb-1 block">SubID / Rastreio (Opcional)</label>
-                                <input 
-                                    type="text" 
-                                    id="subIdInput" 
-                                    placeholder="Ex: instagram_bio, telegram" 
-                                    class="w-full px-3.5 py-2.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white text-xs focus:ring-2 focus:ring-shopee-500 focus:outline-none"
-                                >
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-400 mb-1 block">Estimativa de Preço (Opcional)</label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">R$</span>
-                                    <input 
-                                        type="number" 
-                                        id="priceInput" 
-                                        step="0.01" 
-                                        placeholder="100,00" 
-                                        class="w-full pl-8 pr-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white text-xs focus:ring-2 focus:ring-shopee-500 focus:outline-none"
-                                    >
-                                </div>
-                            </div>
-                        </div>
-
                         <button 
                             type="submit" 
                             id="btnConvert" 
                             class="w-full py-4 px-6 bg-gradient-to-r from-shopee-500 to-orange-500 hover:from-shopee-600 hover:to-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-shopee-500/30 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 text-base">
                             <i data-lucide="wand-2" class="w-5 h-5"></i> 
-                            <span>Ir para o produto</span>
+                            <span>Gerar Link de Afiliado via Python</span>
                         </button>
                     </form>
 
@@ -240,47 +204,10 @@
                                 </div>
                                 <div class="flex items-baseline justify-between pt-1">
                                     <span class="text-xs text-slate-400">Previsão:</span>
-                                    <span id="estimatedCommissionText" class="text-xl font-extrabold text-emerald-400">R$ 0,00</span>
+                                    <span id="estimatedCommissionText" class="text-xl font-extrabold text-emerald-400">Até 14% do valor</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- BATCH CONVERSION FORM -->
-                <div id="batchConversionSection" class="hidden space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-sm font-semibold text-slate-300 flex items-center justify-between">
-                            <span>Cole Múltiplos Links da Shopee</span>
-                            <span class="text-xs text-slate-400 font-normal">Um link por linha</span>
-                        </label>
-                        <textarea 
-                            id="batchUrlsInput" 
-                            rows="5" 
-                            placeholder="https://shopee.com.br/produto-1&#10;https://shopee.com.br/produto-2" 
-                            class="w-full p-4 bg-slate-800/50 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-shopee-500 transition-all font-mono text-xs sm:text-sm"
-                        ></textarea>
-                    </div>
-
-                    <button 
-                        onclick="handleBatchConvert()" 
-                        class="w-full py-4 px-6 bg-gradient-to-r from-shopee-500 to-orange-500 hover:from-shopee-600 hover:to-orange-600 text-white font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
-                        <i data-lucide="layers" class="w-5 h-5"></i> Converter Todos os Links em Lote
-                    </button>
-
-                    <div id="batchResultContainer" class="hidden space-y-3 pt-4 border-t border-slate-800">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-300">Resultado do Processamento:</span>
-                            <button onclick="copyAllBatchResults()" class="text-xs font-bold text-shopee-500 hover:underline flex items-center gap-1">
-                                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar Todos
-                            </button>
-                        </div>
-                        <textarea 
-                            id="batchOutputTextarea" 
-                            readonly 
-                            rows="5" 
-                            class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl font-mono text-xs text-shopee-400 focus:outline-none"
-                        ></textarea>
                     </div>
                 </div>
 
@@ -346,25 +273,6 @@
             loadHistory();
         });
 
-        function switchTab(tab) {
-            const singleSection = document.getElementById('singleConversionSection');
-            const batchSection = document.getElementById('batchConversionSection');
-            const singleBtn = document.getElementById('tabSingleBtn');
-            const batchBtn = document.getElementById('tabBatchBtn');
-
-            if (tab === 'single') {
-                singleSection.classList.remove('hidden');
-                batchSection.classList.add('hidden');
-                singleBtn.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-slate-900 text-shopee-500 shadow-sm";
-                batchBtn.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white";
-            } else {
-                singleSection.classList.add('hidden');
-                batchSection.classList.remove('hidden');
-                batchBtn.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 bg-slate-900 text-shopee-500 shadow-sm";
-                singleBtn.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white";
-            }
-        }
-
         async function pasteFromClipboard() {
             try {
                 const text = await navigator.clipboard.readText();
@@ -380,8 +288,6 @@
         async function handleConvert(e) {
             e.preventDefault();
             const url = document.getElementById('shopeeUrl').value.trim();
-            const subId = document.getElementById('subIdInput').value.trim();
-            const price = parseFloat(document.getElementById('priceInput').value) || 0;
 
             if(!url) {
                 showToast('Informe um link válido.', 'error');
@@ -395,16 +301,16 @@
             lucide.createIcons();
 
             try {
-                // Envia apenas a URL e o SubId. As chaves ficam estritamente seguras no Python do servidor.
+                // Envia apenas a URL. As chaves ficam estritamente seguras no Python do servidor.
                 const res = await fetch('/api/convert', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url, subId })
+                    body: JSON.stringify({ url })
                 });
                 const data = await res.json();
                 
                 if(data.success) {
-                    displayResult(data.convertedUrl, data.method, price);
+                    displayResult(data.convertedUrl, data.method);
                     saveToHistory(url, data.convertedUrl);
                     showToast('Link gerado com sucesso!', 'success');
                 } else {
@@ -419,25 +325,16 @@
             }
         }
 
-        function displayResult(convertedUrl, methodText, price) {
+        function displayResult(convertedUrl, methodText) {
             const resultCard = document.getElementById('resultCard');
             const output = document.getElementById('convertedUrlOutput');
             const openBtn = document.getElementById('openLinkBtn');
             const badge = document.getElementById('conversionMethodBadge');
-            const commissionText = document.getElementById('estimatedCommissionText');
 
             resultCard.classList.remove('hidden');
             output.value = convertedUrl;
             openBtn.href = convertedUrl;
             badge.innerText = methodText;
-
-            if (price > 0) {
-                const minComm = (price * 0.08).toFixed(2);
-                const maxComm = (price * 0.14).toFixed(2);
-                commissionText.innerText = `R$ ${minComm} a R$ ${maxComm}`;
-            } else {
-                commissionText.innerText = `Até 14% do valor`;
-            }
 
             generateQRCode(convertedUrl);
             resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -476,31 +373,6 @@
             if (!text) return;
             navigator.clipboard.writeText(text);
             showToast('Link copiado para a área de transferência!', 'success');
-        }
-
-        async function handleBatchConvert() {
-            const batchInput = document.getElementById('batchUrlsInput').value.trim();
-            if (!batchInput) {
-                showToast('Insira ao menos um link da Shopee.', 'error');
-                return;
-            }
-
-            const urls = batchInput.split('\n').filter(u => u.trim().length > 0);
-            const results = [];
-            
-            for (let u of urls) {
-                const clean = u.trim();
-                const sep = clean.includes('?') ? '&' : '?';
-                results.push(`${clean}${sep}utm_source=an_server&af_siteid=server`);
-            }
-
-            document.getElementById('batchOutputTextarea').value = results.join('\n');
-            document.getElementById('batchResultContainer').classList.remove('hidden');
-            showToast(`${results.length} links processados em lote!`, 'success');
-        }
-
-        function copyAllBatchResults() {
-            copyToClipboard(document.getElementById('batchOutputTextarea').value);
         }
 
         function saveToHistory(orig, conv) {
